@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     batch_size = 128
     num_classes = 10
-    epochs = 12
+    epochs = 1
 
     # input image dimensions
     img_rows, img_cols = 128, 128
@@ -129,3 +129,5 @@ if __name__ == "__main__":
     score = model.evaluate(x_test, y_test, verbose=0)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
+
+    model.save("./models/cnn.h5")
