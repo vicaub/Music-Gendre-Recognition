@@ -24,7 +24,6 @@ def storeArray(featuresArray, ppFilePath):
 def prepossessingAudio(audioPath, ppFilePath):
     print('Prepossessing ' + audioPath)
 
-    featuresArray = []
     Y, sr = librosa.load(audioPath)
     SOUND_SAMPLE_LENGTH = len(Y)
     WINDOW_SAMPLE_LENGTH = int(WINDOW_DURATION * sr)
@@ -62,7 +61,7 @@ if __name__ == "__main__":
     for label in label_list:
         path = "./genres/" + label
         for song in os.listdir(path):
-            if os.path.isfile(path + "/" + song) and not song.str.endswith(".pickle"):
+            if os.path.isfile(path + "/" + song) and not song.endswith(".pickle"):
                 audioPath = path + "/" + song
                 ppFilePath = path + "/" + song + ".pickle"
                 if ppFilePath not in os.listdir(path):
