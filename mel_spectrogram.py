@@ -5,7 +5,7 @@ import pickle
 import matplotlib.pyplot as plt
 import librosa.display
 
-WINDOW_DURATION = 0.1
+WINDOW_DURATION = 0.02 #secconds
 
 
 def prepossessingAudio(audioPath, ppFilePath):
@@ -15,8 +15,11 @@ def prepossessingAudio(audioPath, ppFilePath):
     Y, sr = librosa.load(audioPath)
     SOUND_SAMPLE_LENGTH = len(Y)
     WINDOW_SAMPLE_LENGTH = int(WINDOW_DURATION * sr)
+    print("sr", sr, "WINDOW_SAMPLE_LENGTH", WINDOW_SAMPLE_LENGTH)
 
-    S = librosa.feature.melspectrogram(Y, sr=sr, hop_length=WINDOW_SAMPLE_LENGTH, n_mels=1000)
+    S = librosa.feature.melspectrogram(Y, sr=sr, hop_length=WINDOW_SAMPLE_LENGTH, n_mels=128)
+    shape = S.shape
+    print("shape", shape)
 
     plt.figure(figsize=(10, 4))
     librosa.display.specshow(librosa.power_to_db(S, ref=np.max), y_axis='mel', fmax=8000, x_axis='time')
@@ -25,27 +28,7 @@ def prepossessingAudio(audioPath, ppFilePath):
     plt.tight_layout()
     plt.show()
 
-    # for i in range(int(SOUND_SAMPLE_LENGTH // WINDOW_SAMPLE_LENGTH)):
-    #     y = Y[i*WINDOW_SAMPLE_LENGTH: (i+1)*WINDOW_SAMPLE_LENGTH]
-
-    #     # Let's make and display a mel-scaled power (energy-squared) spectrogram
-    #     S = librosa.feature.melspectrogram(y, sr=sr, n_mels=128)
-
-    #     # Convert to log scale (dB). We'll use the peak power as reference.
-    #     log_S = librosa.amplitude_to_db(S)
-    #     # Finally compte the MFCC
-    #     mfcc = librosa.feature.mfcc(S=log_S, sr=sr, n_mfcc=1)[0]
-
-    #     featuresArray.append(mfcc)
-
-    #     print(mfcc)
-
-    #     # featuresArray.append(S)
-
-
-
     # print('storing pp file: ' + ppFilePath)
-    
 
     # f = open(ppFilePath, 'wb')
     # pickle.dump(featuresArray, f)
@@ -56,6 +39,16 @@ def prepossessingAudio(audioPath, ppFilePath):
     # recup = pickle.load(g)
 
     # print(recup)
+
+    squares = []
+    i = 0
+    while i < shape[1] - shape[0]:
+        squares.append(S[i: i + shape[0]])
+        i += shape[0]
+
+    print(len(squares))
+    print(len(squares[0]))
+    print(len(squares[0][0]))
 
 if __name__ == "__main__":
     file_path = "blues.00000.au"
