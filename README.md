@@ -1,4 +1,4 @@
-# Music-Gendre-Recognition
+# Music Genre Recognition
 
 ## Introduction
 
@@ -39,3 +39,8 @@ python3 conv_neural_network.py
 ```
 
 It will store the model at the end of the process in the folder ./models/
+
+## TODO
+
+clean conv_neural_network.py = separate functions, provide more running options, store indivudual models and be able to retrieve stored model
+make a script for testing

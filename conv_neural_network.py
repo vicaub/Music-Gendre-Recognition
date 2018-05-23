@@ -21,20 +21,29 @@ genre_to_label = {
     "rock": 9
 }
 
+def storeModel(model):
+    directory = "./models"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    model.save("./models/cnn.h5")
+
 if __name__ == "__main__":
 
-    # Parameters
-    # learning_rate = 0.001
-    # training_iters = 100000
-    # batch_size = 64
-    # display_step = 1
-    train_size = 0.7
+    import optparse
+    optparser = optparse.OptionParser(
+        usage='python3 %prog [OPTION]\n')
+    optparser.add_option(
+        '-e', '--epocs', type='int', default=12,
+        help='number of epocs')
 
-    # Network Parameters
-    # n_input = 599 * 128
-    # n_input = 599 * 128*2
-    # n_classes = 10
-    # dropout = 0.75  # Dropout, probability to keep units
+    options, args = optparser.parse_args()
+
+
+
+
+    train_size = 0.7
+    validation_size = 0.2
+    test_size = 0.1
 
     # Load data
     data = []
@@ -58,11 +67,6 @@ if __name__ == "__main__":
     print("labels shape", labels.shape)
     print("data shape", data.shape)
     dataLength = len(data)
-    # data = data.reshape((data.shape[0], n_input))
-
-    # #Hack
-    # data = np.random.random((1000, n_input))
-    # labels = np.random.random((1000, 10))
 
     # Shuffle data
     permutation = np.random.permutation(dataLength)
@@ -73,12 +77,16 @@ if __name__ == "__main__":
     x_train = data[:int(train_size * dataLength)]
     y_train = labels[:int(train_size * dataLength)]
 
-    x_test = data[int(train_size * dataLength):]
-    y_test = labels[int(train_size * dataLength):]
+    x_validation = data[int(train_size * dataLength): int((train_size + validation_size) * dataLength)]
+    y_validation = labels[int(train_size * dataLength): int((train_size + validation_size) * dataLength)]
+
+    x_test = data[int((train_size + validation_size) * dataLength):]
+    y_test = labels[int((train_size + validation_size) * dataLength):]
+
 
     batch_size = 128
     num_classes = 10
-    epochs = 12
+    epochs = options.epocs
 
     # input image dimensions
     img_rows, img_cols = 128, 128
@@ -86,23 +94,29 @@ if __name__ == "__main__":
 
     if K.image_data_format() == 'channels_first':
         x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
+        x_validation = x_validation.reshape(x_validation.shape[0], 1, img_rows, img_cols)
         x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
         input_shape = (1, img_rows, img_cols)
     else:
         x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
+        x_validation = x_validation.reshape(x_validation.shape[0], img_rows, img_cols, 1)
         x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
         input_shape = (img_rows, img_cols, 1)
 
     x_train = x_train.astype('float32')
+    x_validation = x_validation.astype('float32')
     x_test = x_test.astype('float32')
     x_train /= 255
+    x_validation /= 255
     x_test /= 255
     print('x_train shape:', x_train.shape)
     print(x_train.shape[0], 'train samples')
+    print(x_validation.shape[0], 'validation samples')
     print(x_test.shape[0], 'test samples')
 
     # convert class vectors to binary class matrices
     y_train = keras.utils.to_categorical(y_train, num_classes)
+    y_validation = keras.utils.to_categorical(y_validation, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
 
     model = Sequential()
@@ -125,9 +139,9 @@ if __name__ == "__main__":
             batch_size=batch_size,
             epochs=epochs,
             verbose=1,
-            validation_data=(x_test, y_test))
-    score = model.evaluate(x_test, y_test, verbose=0)
+            validation_data=(x_validation, y_validation))
+    score = model.evaluate(x_test, y_test, verbose=1)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
 
-    model.save("./models/cnn.h5")
+    storeModel(model)
