@@ -1,6 +1,9 @@
 # database
 genres/
 
+# models
+models/*
+
 # vscode settings
 .vscode/
 
@@ -106,3 +109,4 @@ ENV/
 
 # mypy
 .mypy_cache/
+models/.DS_Store

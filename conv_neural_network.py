@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     batch_size = 128
     num_classes = 10
-    epochs = 1
+    epochs = 12
 
     # input image dimensions
     img_rows, img_cols = 128, 128
