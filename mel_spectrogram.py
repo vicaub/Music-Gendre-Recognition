@@ -21,13 +21,12 @@ def storeArray(featuresArray, ppFilePath):
 
     # print(recup)
 
-def prepossessingAudio(audioPath, ppFilePath):
+def prepossessingAudio(audioPath):
     print('Prepossessing ' + audioPath)
 
     Y, sr = librosa.load(audioPath)
     SOUND_SAMPLE_LENGTH = len(Y)
     WINDOW_SAMPLE_LENGTH = int(WINDOW_DURATION * sr)
-    # print("sr", sr, "WINDOW_SAMPLE_LENGTH", WINDOW_SAMPLE_LENGTH)
 
     S = librosa.feature.melspectrogram(Y, sr=sr, hop_length=WINDOW_SAMPLE_LENGTH, n_mels=128)
     shape = S.shape
@@ -48,10 +47,6 @@ def prepossessingAudio(audioPath, ppFilePath):
         squares.append(S[i: i + shape[0]])
         i += shape[0]
 
-    # print(len(squares))
-    # print(len(squares[0]))
-    # print(len(squares[0][0]))
-
     return squares
 
 if __name__ == "__main__":
@@ -65,7 +60,7 @@ if __name__ == "__main__":
                 audioPath = path + "/" + song
                 ppFilePath = path + "/" + song + ".pickle"
                 if ppFilePath not in os.listdir(path):
-                    squares = prepossessingAudio(audioPath, ppFilePath)
+                    squares = prepossessingAudio(audioPath)
                     storeArray(squares, ppFilePath)
                     
 

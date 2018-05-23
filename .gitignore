@@ -4,6 +4,9 @@ genres/
 # models
 models/*
 
+# test files
+*.testsong
+
 # database archive
 *.tar.gz
 

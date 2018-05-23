@@ -1,12 +1,7 @@
 import os
 import pickle
 import numpy as np
-import keras
-from keras.datasets import mnist
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
-from keras import backend as K
+
 
 genre_to_label = {
     "blues": 0,
@@ -27,20 +22,14 @@ def storeModel(model):
         os.makedirs(directory)
     model.save("./models/cnn.h5")
 
-if __name__ == "__main__":
-
-    import optparse
-    optparser = optparse.OptionParser(
-        usage='python3 %prog [OPTION]\n')
-    optparser.add_option(
-        '-e', '--epocs', type='int', default=12,
-        help='number of epocs')
-
-    options, args = optparser.parse_args()
-
-
-
-
+def makeModel(numberEpocs):
+    import keras
+    from keras.datasets import mnist
+    from keras.models import Sequential
+    from keras.layers import Dense, Dropout, Flatten
+    from keras.layers import Conv2D, MaxPooling2D
+    from keras import backend as K
+    
     train_size = 0.7
     validation_size = 0.2
     test_size = 0.1
@@ -86,7 +75,7 @@ if __name__ == "__main__":
 
     batch_size = 128
     num_classes = 10
-    epochs = options.epocs
+    epochs = numberEpocs
 
     # input image dimensions
     img_rows, img_cols = 128, 128
@@ -143,5 +132,17 @@ if __name__ == "__main__":
     score = model.evaluate(x_test, y_test, verbose=1)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
+
+if __name__ == "__main__":
+
+    import optparse
+    optparser = optparse.OptionParser()
+    optparser.add_option(
+        '-e', '--epocs', type='int', default=12,
+        help='number of epocs')
+
+    options, args = optparser.parse_args()
+
+    model = makeModel(options.epocs)
 
     storeModel(model)
