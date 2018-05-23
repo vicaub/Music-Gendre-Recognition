@@ -4,6 +4,9 @@ genres/
 # models
 models/*
 
+# database archive
+*.tar.gz
+
 # vscode settings
 .vscode/
 
