@@ -6,6 +6,9 @@ from mel_spectrogram import extractFeatures
 
 def predictSong(model, songFeatures):
     test = np.asarray(songFeatures)
+
+    test = test[len(test)//4: len(test) - len(test)//4]
+
     print(test.shape)
 
     test = test.reshape(test.shape[0], 128, 128, 1)

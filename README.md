@@ -35,7 +35,24 @@ python3 mel_spectrogram.py
 
 Then you need to run the convolutional neural network to create the model
 ```
-python3 conv_neural_network.py
+python3 conv_neural_network.py [options]
+
+Options:
+  -h, --help            show this help message and exit
+  -e EPOCS, --epocs=EPOCS
+                        number of epocs
+  -m MODEL, --model=MODEL
+                        name of the model to store
+```
+
+To try a model on a new song you need to copy a song in the root folder of the project and change the extention to ".testsong". Then run the following command
+```
+python3 run_model.py [options]
+
+Options:
+  -h, --help            show this help message and exit
+  -m MODEL, --model=MODEL
+                        name of the model to use
 ```
 
 It will store the model at the end of the process in the folder ./models/

@@ -189,10 +189,15 @@ if __name__ == "__main__":
         '-e', '--epocs', type='int', default=12,
         help='number of epocs')
     optparser.add_option(
-        '-m', '--model', type='string', default="cnn",
+        '-m', '--model', type='string',
         help='name of the model to store')
 
     options, args = optparser.parse_args()
+
+    if not options.model:
+        print("No model provided")
+        optparser.print_help()
+        exit(-1)
 
     model = makeModel(options.epocs, options.model)
 
