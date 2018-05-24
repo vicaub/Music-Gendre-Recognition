@@ -6,7 +6,7 @@ from scipy.io import wavfile
 from scipy.signal import correlate, hamming
 from sklearn.externals import joblib
 from keras.models import load_model
-
+from keras import backend as K
 
 WINDOW_DURATION = 0.02 #secconds
 
@@ -31,6 +31,7 @@ def prepossessingAudio(audioPath):
 
 
     S = np.transpose(S)
+    print(S.shape)
     squares = []
     i = 0
     while i < shape[1] - shape[0]:
@@ -41,7 +42,17 @@ def prepossessingAudio(audioPath):
 
 
 def predictSong(model, songFeatures):
-    return model.predict(songFeatures[0], verbose=1)
+    test = np.asarray(songFeatures[0])
+    print(test.shape)
+    # if K.image_data_format() == 'channels_first':
+    #     test = test.reshape(test.shape[0], 1, 128, 128)
+    # else:
+    #     test = test.reshape(test.shape[0], 128, 128, 1)
+
+    test = test.astype('float32')
+    test /= 255
+
+    return model.predict(test, verbose=1)
 
 if __name__ == "__main__":
     
