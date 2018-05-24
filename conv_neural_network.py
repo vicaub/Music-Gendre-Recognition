@@ -55,7 +55,7 @@ def makeModel(numberEpocs, modelName):
                         squares = pickle.loads(content)
                         data += squares
                         labels += [genre_to_label[label] for i in range(len(squares))]
-                        print("retrieved song:", song)
+    print("imported", len(labels), "song features")
 
                         
 
