@@ -1,53 +1,14 @@
 from __future__ import print_function, division
 import os
 import numpy as np
-import librosa
-from scipy.io import wavfile
-from scipy.signal import correlate, hamming
-from sklearn.externals import joblib
 from keras.models import load_model
-from keras import backend as K
-
-WINDOW_DURATION = 0.02 #secconds
-
-
-def prepossessingAudio(audioPath):
-    print('Prepossessing ' + audioPath)
-
-    Y, sr = librosa.load(audioPath)
-    SOUND_SAMPLE_LENGTH = len(Y)
-    WINDOW_SAMPLE_LENGTH = int(WINDOW_DURATION * sr)
-
-    S = librosa.feature.melspectrogram(Y, sr=sr, hop_length=WINDOW_SAMPLE_LENGTH, n_mels=128)
-    shape = S.shape
-    # print("shape", shape)
-
-    # plt.figure(figsize=(10, 4))
-    # librosa.display.specshow(librosa.power_to_db(S, ref=np.max), y_axis='mel', fmax=sr, x_axis='time')
-    # plt.colorbar(format='%+2.0f dB')
-    # plt.title('Mel spectrogram')
-    # plt.tight_layout()
-    # plt.show()
-
-
-    S = np.transpose(S)
-    print(S.shape)
-    squares = []
-    i = 0
-    while i < shape[1] - shape[0]:
-        squares.append(S[i: i + shape[0]])
-        i += shape[0]
-
-    return squares
-
+from mel_spectrogram import extractFeatures
 
 def predictSong(model, songFeatures):
-    test = np.asarray(songFeatures[0])
+    test = np.asarray(songFeatures)
     print(test.shape)
-    # if K.image_data_format() == 'channels_first':
-    #     test = test.reshape(test.shape[0], 1, 128, 128)
-    # else:
-    #     test = test.reshape(test.shape[0], 128, 128, 1)
+
+    test = test.reshape(test.shape[0], 128, 128, 1)
 
     test = test.astype('float32')
     test /= 255
@@ -69,8 +30,26 @@ if __name__ == "__main__":
         optparser.print_help()
         exit(-1)
 
-    songFeatures = prepossessingAudio(args[0])
+    songFeatures = extractFeatures(args[0])
 
     model = load_model('./models/' + options.model)
 
-    predictSong(model, songFeatures)
+    output = predictSong(model, songFeatures)
+
+    sumProbabilities = output[0]
+    for i in range(1, len(output)):
+        sumProbabilities = np.add(sumProbabilities, output[i])
+
+    print(sumProbabilities)
+
+    maxProbabilities = [0 for i in range(10)]
+    for i in range(0, len(output)):
+        maxProbabilities[np.argmax(output[i])] += 1
+    maxProbabilities = np.array(maxProbabilities)
+    # maxProbabilities /= sum(maxProbabilities)
+
+    print(maxProbabilities)
+    
+
+
+

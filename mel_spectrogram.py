@@ -16,12 +16,7 @@ def storeArray(featuresArray, ppFilePath):
     f.write(pickle.dumps(featuresArray))
     f.close()
 
-    # g = open(ppFilePath, 'rb')
-    # recup = pickle.load(g)
-
-    # print(recup)
-
-def prepossessingAudio(audioPath):
+def extractFeatures(audioPath):
     print('Prepossessing ' + audioPath)
 
     Y, sr = librosa.load(audioPath)
@@ -30,7 +25,6 @@ def prepossessingAudio(audioPath):
 
     S = librosa.feature.melspectrogram(Y, sr=sr, hop_length=WINDOW_SAMPLE_LENGTH, n_mels=128)
     shape = S.shape
-    # print("shape", shape)
 
     # plt.figure(figsize=(10, 4))
     # librosa.display.specshow(librosa.power_to_db(S, ref=np.max), y_axis='mel', fmax=sr, x_axis='time')
@@ -38,7 +32,6 @@ def prepossessingAudio(audioPath):
     # plt.title('Mel spectrogram')
     # plt.tight_layout()
     # plt.show()
-
 
     S = np.transpose(S)
     squares = []
@@ -51,7 +44,6 @@ def prepossessingAudio(audioPath):
 
 if __name__ == "__main__":
     label_list = [name for name in os.listdir("./genres") if os.path.isdir("./genres/" + name)]
-    print("label_list", label_list)
 
     for label in label_list:
         path = "./genres/" + label
@@ -60,11 +52,7 @@ if __name__ == "__main__":
                 audioPath = path + "/" + song
                 ppFilePath = path + "/" + song + ".pickle"
                 if ppFilePath not in os.listdir(path):
-                    squares = prepossessingAudio(audioPath)
+                    squares = extractFeatures(audioPath)
                     storeArray(squares, ppFilePath)
                     
-
-    # file_path = "blues.00000.au"
-    # ppFilePath = "test_mfcc"
-    # prepossessingAudio(file_path, ppFilePath)
 

@@ -16,20 +16,28 @@ genre_to_label = {
     "rock": 9
 }
 
-def storeModel(model):
+def storeModel(model, name):
     directory = "./models"
     if not os.path.exists(directory):
         os.makedirs(directory)
-    model.save("./models/cnn.h5")
+    model.save("./models/"+ name + ".h5")
 
-def makeModel(numberEpocs):
+def prepareData():
+    pass
+
+def musicModel():
+    pass
+def imageModel():
+    pass
+
+def makeModel(numberEpocs, modelName):
     import keras
-    from keras.datasets import mnist
-    from keras.models import Sequential
-    from keras.layers import Dense, Dropout, Flatten
-    from keras.layers import Conv2D, MaxPooling2D
     from keras import backend as K
-    
+    from keras.models import Sequential, Model
+    from keras.layers import Dense, TimeDistributed, LSTM, Dropout, Activation, Flatten, Convolution2D, Conv2D, MaxPooling2D
+    from keras.layers.normalization import BatchNormalization
+    from keras.layers.advanced_activations import ELU
+
     train_size = 0.7
     validation_size = 0.2
     test_size = 0.1
@@ -108,21 +116,59 @@ def makeModel(numberEpocs):
     y_validation = keras.utils.to_categorical(y_validation, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
 
-    model = Sequential()
-    model.add(Conv2D(32, kernel_size=(3, 3),
-                    activation='relu',
-                    input_shape=input_shape))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-    model.add(Flatten())
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(num_classes, activation='softmax'))
+    
+    if modelName == "music":
+    
+        nb_filters = 32  # number of convolutional filters to use
+        pool_size = (2, 2)  # size of pooling area for max pooling
+        kernel_size = (3, 3)  # convolution kernel size
+        nb_layers = 4
 
-    model.compile(loss=keras.losses.categorical_crossentropy,
-                optimizer=keras.optimizers.Adadelta(),
-                metrics=['accuracy'])
+        model = Sequential()
+        model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1],
+                            border_mode='valid', input_shape=input_shape))
+        model.add(BatchNormalization())
+        model.add(Activation('relu'))
+
+        for layer in range(nb_layers-1):
+            model.add(Convolution2D(nb_filters, kernel_size[0], kernel_size[1]))
+            model.add(BatchNormalization())
+            model.add(ELU(alpha=1.0))  
+            model.add(MaxPooling2D(pool_size=pool_size))
+            model.add(Dropout(0.25))
+
+        model.add(Flatten())
+        model.add(Dense(128))
+        model.add(Activation('relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(num_classes))
+        model.add(Activation("softmax"))
+
+        model.compile(loss='categorical_crossentropy',
+                optimizer='adam',
+        metrics=['accuracy'])
+
+
+    #############################
+
+    if modelName == "image":
+
+        model = Sequential()
+        model.add(Conv2D(32, kernel_size=(3, 3),
+                        activation='relu',
+                        input_shape=input_shape))
+        model.add(Conv2D(64, (3, 3), activation='relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Dropout(0.25))
+        model.add(Flatten())
+        model.add(Dense(128, activation='relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(num_classes, activation='softmax'))
+
+        model.compile(loss=keras.losses.categorical_crossentropy,
+                    optimizer=keras.optimizers.Adadelta(),
+                    metrics=['accuracy'])
+
 
     model.fit(x_train, y_train,
             batch_size=batch_size,
@@ -133,6 +179,8 @@ def makeModel(numberEpocs):
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
 
+    return model
+
 if __name__ == "__main__":
 
     import optparse
@@ -140,9 +188,12 @@ if __name__ == "__main__":
     optparser.add_option(
         '-e', '--epocs', type='int', default=12,
         help='number of epocs')
+    optparser.add_option(
+        '-m', '--model', type='string', default="cnn",
+        help='name of the model to store')
 
     options, args = optparser.parse_args()
 
-    model = makeModel(options.epocs)
+    model = makeModel(options.epocs, options.model)
 
-    storeModel(model)
+    storeModel(model, options.model)
