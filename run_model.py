@@ -3,6 +3,7 @@ import os
 import numpy as np
 from keras.models import load_model
 from mel_spectrogram import extractFeatures
+from conv_neural_network import genre_to_label
 
 def predictSong(model, songFeatures):
     test = np.asarray(songFeatures)
@@ -46,17 +47,19 @@ if __name__ == "__main__":
         sumProbabilities = output[0]
         for i in range(1, len(output)):
             sumProbabilities = np.add(sumProbabilities, output[i])
-
-        print(sumProbabilities)
+        print("Sum of probabilities")
+        label_to_genre = {v: k for k, v in genre_to_label.items()}
+        for i in range(len(sumProbabilities)):
+            print(genre_to_label[i], sumProbabilities[i])
 
         maxProbabilities = [0 for i in range(10)]
         for i in range(0, len(output)):
             maxProbabilities[np.argmax(output[i])] += 1
-        maxProbabilities = np.array(maxProbabilities)
-        # maxProbabilities /= sum(maxProbabilities)
-
-        print(maxProbabilities)
-    
+        for i in range(len(maxProbabilities)):
+            maxProbabilities[i] /= sum(maxProbabilities)
+        print("Max probabilities")
+        for i in range(len(maxProbabilities)):
+            print(genre_to_label[i], maxProbabilities[i])
 
 
 
