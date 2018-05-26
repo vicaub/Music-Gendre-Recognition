@@ -10,8 +10,6 @@ def predictSong(model, songFeatures):
 
     test = test[len(test)//4: len(test) - len(test)//4]
 
-    print(test.shape)
-
     test = test.reshape(test.shape[0], 128, 128, 1)
 
     test = test.astype('float32')
@@ -47,11 +45,13 @@ if __name__ == "__main__":
         sumProbabilities = output[0]
         for i in range(1, len(output)):
             sumProbabilities = np.add(sumProbabilities, output[i])
+        print()
         print("Sum of probabilities")
         label_to_genre = {v: k for k, v in genre_to_label.items()}
         for i in range(len(sumProbabilities)):
             print(label_to_genre[i], sumProbabilities[i])
 
+        print()
         maxProbabilities = [0 for i in range(10)]
         for i in range(0, len(output)):
             maxProbabilities[np.argmax(output[i])] += 1
@@ -60,6 +60,6 @@ if __name__ == "__main__":
         print("Max probabilities")
         for i in range(len(maxProbabilities)):
             print(label_to_genre[i], maxProbabilities[i])
-
+        print()
 
 
