@@ -58,7 +58,7 @@ if __name__ == "__main__":
             probability = 0
             for square in output:
                 probability += square[i]
-            print(label_to_genre[i], sumProbabilities[i] / len(output))
+            print(label_to_genre[i], probability / len(output))
             
 
         print()
