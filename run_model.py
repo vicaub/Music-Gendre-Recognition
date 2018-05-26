@@ -50,7 +50,7 @@ if __name__ == "__main__":
         print("Sum of probabilities")
         label_to_genre = {v: k for k, v in genre_to_label.items()}
         for i in range(len(sumProbabilities)):
-            print(genre_to_label[i], sumProbabilities[i])
+            print(genre_to_label[i + 1], sumProbabilities[i])
 
         maxProbabilities = [0 for i in range(10)]
         for i in range(0, len(output)):
@@ -59,7 +59,7 @@ if __name__ == "__main__":
             maxProbabilities[i] /= sum(maxProbabilities)
         print("Max probabilities")
         for i in range(len(maxProbabilities)):
-            print(genre_to_label[i], maxProbabilities[i])
+            print(genre_to_label[i + 1], maxProbabilities[i])
 
 
 
