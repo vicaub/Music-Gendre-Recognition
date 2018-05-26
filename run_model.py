@@ -42,24 +42,36 @@ if __name__ == "__main__":
 
         output = predictSong(model, songFeatures)
 
-        sumProbabilities = output[0]
-        for i in range(1, len(output)):
-            sumProbabilities = np.add(sumProbabilities, output[i])
-        print()
-        print("Sum of probabilities")
         label_to_genre = {v: k for k, v in genre_to_label.items()}
-        for i in range(len(sumProbabilities)):
-            print(label_to_genre[i], sumProbabilities[i])
+
+        # sumProbabilities = output[0]
+        # for i in range(1, len(output)):
+        #     sumProbabilities = np.add(sumProbabilities, output[i])
+        # print()
+        # print("Sum of probabilities")
+        # for i in range(len(sumProbabilities)):
+        #     print(label_to_genre[i], sumProbabilities[i])
 
         print()
-        maxProbabilities = [0 for i in range(10)]
+        print("Sum of probabilities")
+        for i in label_to_genre.keys():
+            probability = 0
+            for square in output:
+                probability += square[i]
+            print(label_to_genre[i], sumProbabilities[i] / len(output))
+            
+
+        print()
+
+        maxProbabilities = [0 for i in range(len(label_to_genre.keys()))]
         for i in range(0, len(output)):
             maxProbabilities[np.argmax(output[i])] += 1
         for i in range(len(maxProbabilities)):
-            maxProbabilities[i] /= sum(maxProbabilities)
+            maxProbabilities[i] /= len(output)
         print("Max probabilities")
         for i in range(len(maxProbabilities)):
             print(label_to_genre[i], maxProbabilities[i])
+
         print()
 
 
