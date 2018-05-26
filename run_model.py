@@ -29,29 +29,33 @@ if __name__ == "__main__":
     options, args = optparser.parse_args()
 
     if len(args) == 0:
-        print("No FILENAME provided")
-        optparser.print_help()
-        exit(-1)
+        args = [name for name in os.listdir("./testsongs") if os.path.isfile("./testsongs/" + name)]
 
-    songFeatures = extractFeatures(args[0])
+        print("All test files are selected")
+        print(args)
+    
+    # import the right model
+    model = load_model('./models/' + options.model, custom_objects=custom_objects) 
 
-    model = load_model('./models/' + options.model)
+    for filePath in args:
+        filePath = "./testsongs/" + filePath
+        songFeatures = extractFeatures(filePath)
 
-    output = predictSong(model, songFeatures)
+        output = predictSong(model, songFeatures)
 
-    sumProbabilities = output[0]
-    for i in range(1, len(output)):
-        sumProbabilities = np.add(sumProbabilities, output[i])
+        sumProbabilities = output[0]
+        for i in range(1, len(output)):
+            sumProbabilities = np.add(sumProbabilities, output[i])
 
-    print(sumProbabilities)
+        print(sumProbabilities)
 
-    maxProbabilities = [0 for i in range(10)]
-    for i in range(0, len(output)):
-        maxProbabilities[np.argmax(output[i])] += 1
-    maxProbabilities = np.array(maxProbabilities)
-    # maxProbabilities /= sum(maxProbabilities)
+        maxProbabilities = [0 for i in range(10)]
+        for i in range(0, len(output)):
+            maxProbabilities[np.argmax(output[i])] += 1
+        maxProbabilities = np.array(maxProbabilities)
+        # maxProbabilities /= sum(maxProbabilities)
 
-    print(maxProbabilities)
+        print(maxProbabilities)
     
 
 
