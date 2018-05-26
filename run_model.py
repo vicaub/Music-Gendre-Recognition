@@ -35,7 +35,7 @@ if __name__ == "__main__":
         print(args)
     
     # import the right model
-    model = load_model('./models/' + options.model, custom_objects=custom_objects) 
+    model = load_model('./models/' + options.model) 
 
     for filePath in args:
         filePath = "./testsongs/" + filePath
