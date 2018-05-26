@@ -2,6 +2,10 @@
 
 ## Introduction
 
+This project is to create a Deep Learning model to classify music genre.
+The training database is the public GTZAN database
+Convolution neural network are used
+
 ## Installation
 
 Make sure to have a recent version of python3  with pip3 installed
