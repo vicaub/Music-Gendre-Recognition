@@ -2,10 +2,10 @@
 genres/
 
 # models
-models/*
+*.h5
 
 # test files
-*.testsong
+# *.testsong
 
 # database archive
 *.tar.gz
