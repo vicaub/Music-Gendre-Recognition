@@ -7,6 +7,9 @@ genres/
 # test files
 # *.testsong
 
+# output png
+*.png
+
 # database archive
 *.tar.gz
 
