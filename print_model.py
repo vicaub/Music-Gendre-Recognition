@@ -5,10 +5,15 @@ if __name__ == "__main__":
     import optparse
     optparser = optparse.OptionParser()
     optparser.add_option(
-        '-m', '--model', type='string', default="cnn.h5",
+        '-m', '--model', type='string',
         help='name of the model to use')
 
     options, args = optparser.parse_args()
+
+    if not options.model:
+        print("No model selected")
+        optparser.print_help()
+        exit(-1)
 
     model = load_model('./models/' + options.model) 
 
